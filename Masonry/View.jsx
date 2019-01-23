@@ -581,50 +581,52 @@ class Masonry extends React.PureComponent {
         } = this.state;
         const layoutHeight = (pages[pages.length - 1] || noPage).stop;
         return (
-            <div ref={this.props.innerRef} className={classNames(containerClassName)}>
-                <div
-                    className={classNames(layoutClassName)}
-                    style={{ height: `${layoutHeight}px`, position: 'relative' }}
-                >
-                    {pages.map((page, index) => {
-                        if (!page.visible) {
-                            return null;
-                        }
-                        return (
-                            <div
-                                className={classNames(pageClassName)}
-                                key={index} // eslint-disable-line react/no-array-index-key
-                            >
-                                {page.items.map(
-                                    ({ props: _props,
-                                        left,
-                                        top,
-                                        width,
-                                        height,
-                                        columnSpan }, itemIndex) => {
-                                        const absIndex = (itemsPerPage * index) + itemIndex;
-                                        const itemProps = items[absIndex] || _props;
-                                        const style = {
-                                            position: 'absolute',
-                                            left: `${left}px`,
-                                            top: `${top}px`,
-                                            width: `${width}px`,
-                                            height: `${height}px`,
-                                        };
-                                        return renderItem({
-                                            key: itemIndex,
-                                            style,
-                                            itemIndex: absIndex,
-                                            item: itemProps,
-                                        });
-                                    },
-                                )}
-                            </div>
-                        );
-                    })}
+            <React.Fragment>
+                <div ref={this.props.innerRef} className={classNames(containerClassName)}>
+                    <div
+                        className={classNames(layoutClassName)}
+                        style={{ height: `${layoutHeight}px`, position: 'relative' }}
+                    >
+                        {pages.map((page, index) => {
+                            if (!page.visible) {
+                                return null;
+                            }
+                            return (
+                                <div
+                                    className={classNames(pageClassName)}
+                                    key={index} // eslint-disable-line react/no-array-index-key
+                                >
+                                    {page.items.map(
+                                        ({ props: _props,
+                                            left,
+                                            top,
+                                            width,
+                                            height,
+                                            columnSpan }, itemIndex) => {
+                                            const absIndex = (itemsPerPage * index) + itemIndex;
+                                            const itemProps = items[absIndex] || _props;
+                                            const style = {
+                                                position: 'absolute',
+                                                left: `${left}px`,
+                                                top: `${top}px`,
+                                                width: `${width}px`,
+                                                height: `${height}px`,
+                                            };
+                                            return renderItem({
+                                                key: itemIndex,
+                                                style,
+                                                itemIndex: absIndex,
+                                                item: itemProps,
+                                            });
+                                        },
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
                 {hasMore && isLoading && loadingElement}
-            </div>
+            </React.Fragment>
         );
     }
 }
