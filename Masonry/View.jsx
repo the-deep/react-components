@@ -53,7 +53,7 @@ const classNamePropType = PropTypes.oneOfType([
     PropTypes.array,
 ]);
 
-export default class Masonry extends React.PureComponent {
+class Masonry extends React.PureComponent {
     static propTypes = {
         alignCenter: PropTypes.bool.isRequired,
         columnGutter: PropTypes.number.isRequired,
@@ -69,6 +69,7 @@ export default class Masonry extends React.PureComponent {
         loadingElement: PropTypes.node,
         onInfiniteLoad: PropTypes.func.isRequired,
         threshold: PropTypes.number.isRequired,
+        innerRef: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
         scrollAnchor: PropTypes.object, // eslint-disable-line react/forbid-prop-types
         state: PropTypes.object, // eslint-disable-line react/no-unused-prop-types
         scrollOffset: PropTypes.number,
@@ -119,9 +120,11 @@ export default class Masonry extends React.PureComponent {
     state = { averageHeight: 300, pages: [] }
 
     componentDidMount() {
+        const { current: node } = this.props.innerRef;
+
         this.computeLayout(this.props);
         this.checkVisibility();
-        this.node.addEventListener('scroll', this.onScroll);
+        node.addEventListener('scroll', this.onScroll);
         window.addEventListener('resize', this.onResize);
     }
 
@@ -134,7 +137,9 @@ export default class Masonry extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        this.node.removeEventListener('scroll', this.onScroll);
+        const { current: node } = this.props.innerRef;
+
+        node.removeEventListener('scroll', this.onScroll);
         window.removeEventListener('resize', this.onResize);
     }
 
@@ -143,17 +148,17 @@ export default class Masonry extends React.PureComponent {
     }, 150, { trailing: true })
 
     onScroll = throttle(() => {
-        if (!this.node) {
+        const { current: node } = this.props.innerRef;
+
+        if (!node) {
             return;
         }
 
-        const bounds = this.node.getBoundingClientRect();
+        const bounds = node.getBoundingClientRect();
 
         this.checkVisibility(bounds);
         this.checkInfiniteLoad(bounds);
     }, 100, { leading: true, trailing: true })
-
-    onReference = (node) => { this.node = node; };
 
     getLeftPositionForColumn(column, viewableStart) {
         return viewableStart + (column * (this.props.columnWidth + this.props.columnGutter));
@@ -164,12 +169,14 @@ export default class Masonry extends React.PureComponent {
             return window.pageYOffset;
         }
 
-        return this.props.scrollAnchor.scrollTop;
+        return this.props.scrollAnchor.current.scrollTop;
     }
 
     getScrollOffset() {
+        const { current: node } = this.props.innerRef;
+
         if (this.props.scrollAnchor === window) {
-            return this.node.offsetTop;
+            return node.offsetTop;
         }
 
         return this.props.scrollOffset;
@@ -180,7 +187,7 @@ export default class Masonry extends React.PureComponent {
             return window.innerHeight;
         }
 
-        return this.props.scrollAnchor.offsetHeight;
+        return this.props.scrollAnchor.current.offsetHeight;
     }
 
     checkInfiniteLoad(bounds) {
@@ -191,13 +198,15 @@ export default class Masonry extends React.PureComponent {
                 onInfiniteLoad();
             }
         } else if (this.props.threshold >
-                scrollAnchor.scrollHeight - this.getScrollTop()) {
+            scrollAnchor.current.scrollHeight - this.getScrollTop()) {
             onInfiniteLoad();
         }
     }
 
     computeLayout(props, rearrange = false) {
-        if (!this.node) {
+        const { current: node } = this.props.innerRef;
+
+        if (!node) {
             return;
         }
         const {
@@ -209,7 +218,7 @@ export default class Masonry extends React.PureComponent {
         } = props;
 
         // Decide a starter position for centering
-        const viewableWidth = this.node.offsetWidth;
+        const viewableWidth = node.offsetWidth;
         const viewableHeight = this.getViewableHeight();
         const maxColumns = Math.floor(viewableWidth / (columnWidth + columnGutter));
         const spannableWidth = (maxColumns * columnWidth) + (columnGutter * (maxColumns - 1));
@@ -572,7 +581,7 @@ export default class Masonry extends React.PureComponent {
         } = this.state;
         const layoutHeight = (pages[pages.length - 1] || noPage).stop;
         return (
-            <div ref={this.onReference} className={classNames(containerClassName)}>
+            <div ref={this.props.innerRef} className={classNames(containerClassName)}>
                 <div
                     className={classNames(layoutClassName)}
                     style={{ height: `${layoutHeight}px`, position: 'relative' }}
@@ -619,3 +628,8 @@ export default class Masonry extends React.PureComponent {
         );
     }
 }
+
+export default React.forwardRef((props, ref) => {
+    const innerRef = ref || React.createRef();
+    return <Masonry {...props} innerRef={innerRef} />;
+});
