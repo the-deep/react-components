@@ -281,7 +281,7 @@ class Masonry extends React.PureComponent {
             }
 
             const item = {
-                props: itemProps,
+                absIndex: items.indexOf(itemProps),
                 column,
                 columnSpan,
                 height,
@@ -597,14 +597,13 @@ class Masonry extends React.PureComponent {
                                     key={index} // eslint-disable-line react/no-array-index-key
                                 >
                                     {page.items.map(
-                                        ({ props: _props,
+                                        ({ absIndex,
                                             left,
                                             top,
                                             width,
                                             height,
                                             columnSpan }, itemIndex) => {
-                                            const absIndex = (itemsPerPage * index) + itemIndex;
-                                            const itemProps = items[absIndex] || _props;
+                                            const itemProps = items[absIndex];
                                             const style = {
                                                 position: 'absolute',
                                                 left: `${left}px`,
