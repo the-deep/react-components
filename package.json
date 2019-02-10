@@ -1,0 +1,50 @@
+{
+    "name": "@timilsinabishal/react-components",
+    "version": "1.0.0",
+    "description": "React components",
+    "main": "build/index.js",
+    "scripts": {
+        "build": "webpack --config config/webpack.js --mode=development",
+        "prepare": "webpack --config config/webpack.js --mode=production"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/timilsinabishal/react-components.git"
+    },
+    "bugs": {
+        "url": "https://github.com/timilsinabishal/react-components/issues"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.1.0",
+        "@babel/plugin-proposal-class-properties": "^7.1.0",
+        "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+        "@babel/preset-env": "^7.1.0",
+        "@babel/preset-react": "^7.0.0",
+        "babel-eslint": "^10.0.1",
+        "babel-loader": "^8.0.2",
+        "eslint": "^5.6.0",
+        "eslint-config-airbnb": "^17.1.0",
+        "eslint-plugin-import": "^2.14.0",
+        "eslint-plugin-jsx-a11y": "^6.1.1",
+        "eslint-plugin-react": "^7.11.1",
+        "react": "^16.5.2",
+        "react-dom": "^16.5.2",
+        "webpack": "^4.27.1",
+        "webpack-cli": "^3.1.2"
+    },
+    "dependencies": {
+        "@babel/plugin-transform-runtime": "^7.1.0",
+        "@babel/polyfill": "^7.0.0",
+        "@babel/runtime": "^7.1.2",
+        "hoist-non-react-statics": "^3.0.1",
+        "prop-types": "^15.6.2",
+        "classnames": "^2.2.6"
+    },
+    "peerDependencies": {
+        "react": "^16.3.2",
+        "react-dom": "^16.3.2"
+    },
+    "resolutions": {
+        "ajv": "6.8.1"
+    }
+}
